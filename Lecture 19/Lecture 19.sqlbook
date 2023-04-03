@@ -79,6 +79,27 @@ Questions
 The quiz will use the Formula 1 dataset
 
 -- SQLBook: Markup
+<font size = "5">
+
+(1) Go to Apps, and open "SQL shell" (psql)
+
+(2) **Carefully** enter the login credentials:
+
+- ```Server [localhost]```: Leave blank, enter "return" key
+- ```Database [postgres]:```: Leave blank and enter the "return" key
+- ``` Port [5432] ```:  Leave blank and enter the "return" key
+- ```Username [postgres]```: Leave blank and enter the "return" key
+- ```Password for user postgres```: Enter your SQL password, e.g. 12345
+<font size = "5">
+
+(3) Enter the command "\copy"
+
+- Run everything as a single line (otherwise it won't work)
+- Replace "us_congress_members" with the relevant table
+- Replace the "pathname" with the file path
+-- SQLBook: Code
+\COPY data_name FROM 'data_path.csv' WITH (DELIMITER ',', FORMAT csv, HEADER MATCH);
+-- SQLBook: Markup
 
 <font size = "5">
 
@@ -87,6 +108,18 @@ The quiz will use the Formula 1 dataset
 - We will provide an image of the codebook <br>
 with column names and data types
 - You will need to use the SQL command ``` CREATE TABLE ```
+
+-- SQLBook: Code
+DROP TABLE IF EXISTS results;
+CREATE TABLE results (
+        "raceId"  int ,
+        "driverId" int ,
+        lap int,
+        position int,
+        time varchar(255),
+       milliseconds int
+);
+
 
 -- SQLBook: Markup
 
@@ -101,6 +134,9 @@ from ".csv" files using the command <br>
 - Display the dataset using ``` SELECT * FROM .... ```
 - See Lecture 18 for more details
 
+-- SQLBook: Code
+\COPY drivers FROM '/Users/michaelshi/Desktop/GitHub/qtm151spring2023/Assignment 8/data_raw/lap_times.csv' WITH (DELIMITER ',', FORMAT csv, HEADER MATCH);
+SELECT * FROM drivers;
 -- SQLBook: Markup
 <font size = "5">
 
@@ -108,6 +144,10 @@ from ".csv" files using the command <br>
 
 - Subset one of the above datasets using ``` WHERE ```
 - Then sort the datasets in ascending or descending order 
+-- SQLBook: Code
+SELECT * FROM drivers
+WHERE nationality='American'
+ORDER BY surname ASC;
 -- SQLBook: Markup
 <font size = "5">
 
@@ -120,6 +160,14 @@ from ".csv" files using the command <br>
 
 
 HINT: See the end of lectures 17
+-- SQLBook: Code
+SELECT nationality,
+       SUM(victories) AS sum_victories,
+       AVG(victories) AS mean_victories,
+       MIN(victories) AS min_victories,
+       MAX(victories) AS max_victories
+FROM drivers
+GROUP BY nationality;
 -- SQLBook: Markup
 <font size = "5">
 
@@ -129,6 +177,14 @@ HINT: See the end of lectures 17
 - Then sort using ``` ORDER BY ```
 
 HINT: See the end of lectures 17 and 18
+-- SQLBook: Code
+SELECT "driverId",
+       SUM(milliseconds) AS sum_milliseconds,
+       AVG(milliseconds) AS mean_milliseconds
+       FROM results
+GROUP BY "driverId"
+ORDER BY sum_milliseconds ASC;
+
 -- SQLBook: Markup
 <font size = "5">
 
@@ -136,3 +192,12 @@ HINT: See the end of lectures 17 and 18
 
 - Compute an aggregate statistict using ```GROUP BY```
 - Subset one of the above datasets using ``` HAVING ```
+-- SQLBook: Code
+SELECT nationality,
+       SUM(victories) AS sum_victories,
+       AVG(victories) AS mean_victories,
+       MIN(victories) AS min_victories,
+       MAX(victories) AS max_victories
+FROM drivers
+GROUP BY nationality
+HAVING SUM(victories) > 50;
